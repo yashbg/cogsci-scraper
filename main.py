@@ -39,13 +39,14 @@ choice_dict = {}
 for _ in range(250):
     question_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/h2/span')))
     question = question_ele.get_attribute('innerHTML')
-    print(question)
 
     if question in choice_dict:
         choice = choice_dict[question]
     else:
         choice = random.randrange(1, 9)
         choice_dict[question] = choice
+    
+    print(question, choice)
     
     choice_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f'/html/body/main/div/section[2]/form/div/div/div/div[2]/div[3]/label[{choice}]')))
     choice_ele.click()
