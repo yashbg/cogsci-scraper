@@ -35,10 +35,21 @@ driver.get(url_projects)
 finish_survey_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/section[2]/div/div/div[1]/div/a')))
 finish_survey_ele.click()
 
+choice_dict = {}
 for _ in range(250):
-    choice = random.randrange(1, 9)
+    question_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/h2/span')))
+    question = question_ele.get_attribute('innerHTML')
+    print(question)
+
+    if question in choice_dict:
+        choice = choice_dict[question]
+    else:
+        choice = random.randrange(1, 9)
+        choice_dict[question] = choice
+    
     choice_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f'/html/body/main/div/section[2]/form/div/div/div/div[2]/div[3]/label[{choice}]')))
     choice_ele.click()
+
 
     next_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/div[2]/div[4]/div/input')))
     next_ele.click()
