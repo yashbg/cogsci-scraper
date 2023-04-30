@@ -7,6 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 import random
 import time
 
+PROJECT_ID = 2
+NUM_ITER = 5000
+WAIT_TIME = 5
+DONT_KNOW_PROB = 0.1
+
 random.seed()
 
 chrome_options = Options()
@@ -32,18 +37,22 @@ driver.find_element(By.NAME, 'login').click()
 url_projects = 'http://langcoglabcgsiitk.in/survey/My_project.php'
 driver.get(url_projects)
 
-finish_survey_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/section[2]/div/div/div[1]/div/a')))
+finish_survey_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f'/html/body/main/section[2]/div/div/div[{PROJECT_ID}]/div/a')))
 finish_survey_ele.click()
 
 choice_dict = {}
-for _ in range(250):
+for _ in range(NUM_ITER):
     question_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/h2/span')))
     question = question_ele.get_attribute('innerHTML')
 
     if question in choice_dict:
         choice = choice_dict[question]
     else:
-        choice = random.randrange(1, 9)
+        if random.random() < DONT_KNOW_PROB:
+            choice = 1
+        else:
+            choice = random.randrange(2, 9)
+        
         choice_dict[question] = choice
     
     print(question, choice)
@@ -51,11 +60,10 @@ for _ in range(250):
     choice_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, f'/html/body/main/div/section[2]/form/div/div/div/div[2]/div[3]/label[{choice}]')))
     choice_ele.click()
 
-
     next_ele = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/div[2]/div[4]/div/input')))
     next_ele.click()
 
-    time.sleep(5)
+    time.sleep(WAIT_TIME)
 
 driver.close()
 print('Done')
