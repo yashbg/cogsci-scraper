@@ -6,7 +6,7 @@ import random
 import time
 
 PROJECT_ID = 2
-NUM_ITER = 5000
+NUM_ITER = 15000
 WAIT_TIME = 5
 DONT_KNOW_PROB = 0.1
 URL_LOGIN = 'http://langcoglabcgsiitk.in/survey/login.php'
@@ -15,7 +15,7 @@ URL_PROJECTS = 'http://langcoglabcgsiitk.in/survey/My_project.php'
 random.seed()
 chrome_options = Options()
 chrome_options.add_argument("--start-maximized")
-# chrome_options.add_experimental_option("detach", True)
+chrome_options.add_experimental_option("detach", True) # keep driver open after script ends
 
 parser = cfg.ConfigParser()
 parser.read('config.cfg')
