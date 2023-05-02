@@ -5,12 +5,11 @@ from selenium.webdriver.common.by import By
 import random
 import time
 
-PROJECT_ID = 2
+URL_LOGIN = 'http://langcoglabcgsiitk.in/survey/login.php'
+URL_PROJECT = 'http://langcoglabcgsiitk.in/survey/survey.php?surveyid=18'
 NUM_ITER = 15000
 WAIT_TIME = 5
 DONT_KNOW_PROB = 0.1
-URL_LOGIN = 'http://langcoglabcgsiitk.in/survey/login.php'
-URL_PROJECTS = 'http://langcoglabcgsiitk.in/survey/My_project.php'
 
 random.seed()
 chrome_options = Options()
@@ -23,22 +22,20 @@ email = parser.get('creds', 'email')
 password = parser.get('creds', 'password')
 
 driver = Chrome(options=chrome_options)
+driver.implicitly_wait(10)
+
 driver.get(URL_LOGIN)
+driver.find_element(By.NAME, 'login_username').send_keys(email) # email
+driver.find_element(By.NAME, 'login_pwd').send_keys(password) # password
+driver.find_element(By.NAME, 'login').click() # login
 
-email_ele = driver.find_element(By.NAME, 'login_username')
-password_ele = driver.find_element(By.NAME, 'login_pwd')
-email_ele.send_keys(email)
-password_ele.send_keys(password)
-driver.find_element(By.NAME, 'login').click()
-
-driver.get(URL_PROJECTS)
-driver.find_element(By.XPATH, f'/html/body/main/section[2]/div/div/div[{PROJECT_ID}]/div/a').click() # finish survey
+driver.get(URL_PROJECT)
 
 choice_dict = {}
 for _ in range(NUM_ITER):
     time.sleep(WAIT_TIME)
 
-    question = driver.find_element(By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/h2/span').get_attribute('innerHTML')
+    question = driver.find_element(By.CLASS_NAME, 'text-success').get_attribute('innerHTML') # question
     if question in choice_dict:
         choice = choice_dict[question]
     else:
@@ -48,9 +45,9 @@ for _ in range(NUM_ITER):
             choice = random.randrange(2, 9)
         choice_dict[question] = choice
     print(question, choice)
-    
-    driver.find_element(By.XPATH, f'/html/body/main/div/section[2]/form/div/div/div/div[2]/div[3]/label[{choice}]').click() # choice
-    driver.find_element(By.XPATH, '/html/body/main/div/section[2]/form/div/div/div/div[2]/div[4]/div/input').click() # next
+
+    driver.find_element(By.CSS_SELECTOR, f'label[for="radio{choice}"]').click() # choice
+    driver.find_element(By.CSS_SELECTOR, 'input[class="btn btn-icon btn-3 btn-success"]').click() # next
 
 driver.close()
 print('Done')
