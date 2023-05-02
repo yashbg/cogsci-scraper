@@ -40,14 +40,14 @@ for _ in range(NUM_ITER):
         choice = choice_dict[question]
     else:
         if random.random() < DONT_KNOW_PROB:
-            choice = 1
+            choice = 0
         else:
-            choice = random.randrange(2, 9)
+            choice = random.randrange(1, 8)
         choice_dict[question] = choice
-    print(question, choice)
 
     driver.find_element(By.CSS_SELECTOR, f'label[for="radio{choice}"]').click() # choice
     driver.find_element(By.CSS_SELECTOR, 'input[class="btn btn-icon btn-3 btn-success"]').click() # next
+    print(question, choice)
 
 driver.close()
 print('Done')
